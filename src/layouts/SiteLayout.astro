@@ -1,0 +1,39 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+  path?: string;
+}
+
+const {
+  title = "Rob Steilberg",
+  description = "Robert Steilberg's home page",
+  path = "/"
+} = Astro.props;
+
+const siteUrl = new URL(path, Astro.site ?? "https://www.robsteilberg.com");
+const backgroundImagePath = "/assets/2.jpg";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/png" href="/assets/favicon.png" />
+    <link rel="canonical" href={siteUrl.toString()} />
+    <meta property="og:url" content={siteUrl.toString()} />
+    <meta property="og:title" content={title} />
+    <meta property="og:type" content="website" />
+    <meta property="og:description" content={description} />
+  </head>
+  <body style={`--site-background-image: url('${backgroundImagePath}')`}>
+    <div class="site-shell">
+      <slot />
+    </div>
+  </body>
+</html>

@@ -1,0 +1,200 @@
+---
+const socketUrl =
+  import.meta.env.PUBLIC_SERVE1090_URL ?? import.meta.env.GATSBY_SERVE1090_URL ?? "";
+const socketToken =
+  import.meta.env.PUBLIC_SERVE1090_TOKEN ?? import.meta.env.GATSBY_SERVE1090_TOKEN ?? "";
+---
+
+<section
+  class="flight-ribbon"
+  data-flight-ribbon
+  data-socket-url={socketUrl}
+  data-socket-token={socketToken}>
+  <div class="flight-ribbon__title">
+    KAUS live feed
+    <sup>
+      <a href="https://github.com/r00b/roob1090" target="_blank" rel="noreferrer">
+        what's this?
+      </a>
+    </sup>
+  </div>
+
+  <div class="flight-ribbon__bar">
+    <div class="flight-ribbon__cycle">
+      <div>
+        Arriving:<span class="flight-ribbon__items" data-flight-items="arriving">none in range</span>
+      </div>
+      <div>
+        Arrived:<span class="flight-ribbon__items" data-flight-items="arrived">none in range</span>
+      </div>
+      <div>
+        Departing:<span class="flight-ribbon__items" data-flight-items="departing">none in range</span>
+      </div>
+      <div>
+        Departed:<span class="flight-ribbon__items" data-flight-items="departed">none in range</span>
+      </div>
+    </div>
+
+    <div class="flight-ribbon__count">
+      <span data-flight-count>0</span>
+      <span class="flight-ribbon__count-label">aircraft in range</span>
+    </div>
+  </div>
+</section>
+
+<script>
+  const SOCKET_RETRY_TIME = 5000;
+  const root = document.querySelector("[data-flight-ribbon]");
+
+  if (root instanceof HTMLElement) {
+    const socketUrl = root.dataset.socketUrl ?? "";
+    const socketToken = root.dataset.socketToken ?? "";
+    const countNode = root.querySelector("[data-flight-count]");
+    const itemNodes = {
+      arriving: root.querySelector('[data-flight-items="arriving"]'),
+      arrived: root.querySelector('[data-flight-items="arrived"]'),
+      departing: root.querySelector('[data-flight-items="departing"]'),
+      departed: root.querySelector('[data-flight-items="departed"]'),
+    };
+
+    const state = {
+      retryId: 0,
+      socket: null,
+    };
+
+    const initialData = {
+      arriving: [],
+      arrived: [],
+      departing: [],
+      departed: [],
+      numInRange: 0,
+    };
+
+    const getArray = value => (Array.isArray(value) ? value : []);
+
+    const formatText = (aircraft, inbound) => {
+      let text = `${aircraft.flight}`;
+
+      if (aircraft.type) {
+        text += `, ${aircraft.type}`;
+      }
+
+      if (inbound && aircraft.origin) {
+        text += ` from ${aircraft.origin}`;
+      } else if (!inbound && aircraft.destination) {
+        text += ` to ${aircraft.destination}`;
+      }
+
+      return text;
+    };
+
+    const renderItems = (items, inbound) => {
+      if (!items.length) {
+        return "none in range";
+      }
+
+      return items
+        .slice(0, 2)
+        .map((aircraft, index) => {
+          const suffix = index === 1 ? ", followed by " : "";
+          const hiddenClass = index === 1 ? " class=\"flight-ribbon__follow-up\"" : "";
+          return `${suffix}<a${hiddenClass} href="https://flightaware.com/live/flight/${aircraft.flight}" target="_blank" rel="noreferrer">${formatText(aircraft, inbound)}</a>`;
+        })
+        .join("");
+    };
+
+    const render = data => {
+      if (countNode) {
+        countNode.textContent = `${data.numInRange}`;
+      }
+
+      const mappings = [
+        ["arriving", true],
+        ["arrived", true],
+        ["departing", false],
+        ["departed", false],
+      ];
+
+      for (const [key, inbound] of mappings) {
+        const node = itemNodes[key];
+
+        if (node instanceof HTMLElement) {
+          node.innerHTML = renderItems(data[key], inbound);
+        }
+      }
+    };
+
+    const reset = () => {
+      render(initialData);
+    };
+
+    const scheduleReconnect = () => {
+      window.clearTimeout(state.retryId);
+      state.retryId = window.setTimeout(connect, SOCKET_RETRY_TIME);
+    };
+
+    const cleanupSocket = () => {
+      if (state.socket) {
+        state.socket.onopen = null;
+        state.socket.onmessage = null;
+        state.socket.onerror = null;
+        state.socket.onclose = null;
+        state.socket.close();
+        state.socket = null;
+      }
+    };
+
+    const parseMessage = event => {
+      try {
+        const data = JSON.parse(event.data);
+        render({
+          arriving: getArray(data.arriving),
+          arrived: getArray(data.arrived),
+          departing: getArray(data.departing),
+          departed: getArray(data.departed),
+          numInRange: data?.stats?.validAircraftCount ?? 0,
+        });
+      } catch (error) {
+        reset();
+      }
+    };
+
+    function connect() {
+      if (!socketUrl) {
+        reset();
+        return;
+      }
+
+      cleanupSocket();
+
+      try {
+        const socket = new WebSocket(socketUrl);
+        state.socket = socket;
+
+        socket.onopen = () => {
+          if (socketToken) {
+            socket.send(JSON.stringify({ token: socketToken }));
+          }
+        };
+
+        socket.onmessage = parseMessage;
+
+        socket.onerror = () => {
+          socket.close();
+        };
+
+        socket.onclose = () => {
+          reset();
+          scheduleReconnect();
+        };
+      } catch (error) {
+        reset();
+        scheduleReconnect();
+      }
+    }
+
+    reset();
+    connect();
+    window.addEventListener("beforeunload", cleanupSocket, { once: true });
+  }
+</script>

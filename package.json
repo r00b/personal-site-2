@@ -1,0 +1,23 @@
+{
+  "name": "personal-site-astro",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Astro rewrite of Rob Steilberg's personal site",
+  "scripts": {
+    "dev": "astro dev --host",
+    "start": "astro dev --host",
+    "build": "astro build",
+    "preview": "astro preview --host",
+    "check": "astro check"
+  },
+  "engines": {
+    "node": ">=18.17.0"
+  },
+  "dependencies": {
+    "astro": "^5.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
