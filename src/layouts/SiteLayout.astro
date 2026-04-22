@@ -14,7 +14,14 @@ const {
 } = Astro.props;
 
 const siteUrl = new URL(path, Astro.site ?? "https://www.robsteilberg.com");
-const backgroundImagePath = "/assets/2.jpg";
+const backgroundImagePaths = [
+  "/assets/site-background-1.jpg",
+  "/assets/site-background-2.jpg",
+  "/assets/site-background-3.jpg",
+  "/assets/site-background-4.jpg",
+  "/assets/site-background-5.jpg",
+];
+const defaultBackgroundImagePath = backgroundImagePaths[0];
 ---
 
 <!doctype html>
@@ -31,9 +38,22 @@ const backgroundImagePath = "/assets/2.jpg";
     <meta property="og:type" content="website" />
     <meta property="og:description" content={description} />
   </head>
-  <body style={`--site-background-image: url('${backgroundImagePath}')`}>
+  <body style={`--site-background-image: url('${defaultBackgroundImagePath}')`}>
     <div class="site-shell">
       <slot />
     </div>
+    <script is:inline define:vars={{ backgroundImagePaths }}>
+      const backgrounds = backgroundImagePaths;
+      const randomIndex = Math.floor(Math.random() * backgrounds.length);
+      const selectedBackground = backgrounds[randomIndex];
+      const shell = document.querySelector(".site-shell");
+
+      if (shell instanceof HTMLElement) {
+        shell.style.setProperty(
+          "--site-background-image",
+          `url('${selectedBackground}')`
+        );
+      }
+    </script>
   </body>
 </html>
