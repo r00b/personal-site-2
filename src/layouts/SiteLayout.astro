@@ -30,35 +30,35 @@ const defaultBackgroundImagePath = backgroundImagePaths[0];
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title>{title}</title>
-    <meta name="description" content={description}/>
-    <link rel="icon" type="image/png" href="/assets/favicon.png"/>
-    <link rel="canonical" href={siteUrl.toString()}/>
-    <meta property="og:url" content={siteUrl.toString()}/>
-    <meta property="og:title" content={title}/>
-    <meta property="og:type" content="website"/>
-    <meta property="og:description" content={description}/>
-    <Analytics/>
-    <SpeedInsights/>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>{title}</title>
+  <meta name="description" content={description}/>
+  <link rel="icon" type="image/png" href="/assets/favicon.png"/>
+  <link rel="canonical" href={siteUrl.toString()}/>
+  <meta property="og:url" content={siteUrl.toString()}/>
+  <meta property="og:title" content={title}/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:description" content={description}/>
+  <Analytics/>
+  <SpeedInsights/>
 </head>
 <body style={`--site-background-image: url('${defaultBackgroundImagePath}')`}>
-    <div class="site-shell">
-        <slot/>
-    </div>
-    <script is:inline define:vars={{backgroundImagePaths}}>
-      const backgrounds = backgroundImagePaths;
-      const randomIndex = Math.floor(Math.random() * backgrounds.length);
-      const selectedBackground = backgrounds[randomIndex];
-      const shell = document.querySelector(".site-shell");
+  <div class="site-shell">
+    <slot/>
+  </div>
+  <script is:inline define:vars={{backgroundImagePaths}}>
+    const backgrounds = backgroundImagePaths;
+    const randomIndex = Math.floor(Math.random() * backgrounds.length);
+    const selectedBackground = backgrounds[randomIndex];
+    const shell = document.querySelector(".site-shell");
 
-      if (shell instanceof HTMLElement) {
-        shell.style.setProperty(
-          "--site-background-image",
-          `url('${selectedBackground}')`
-        );
-      }
-    </script>
+    if (shell instanceof HTMLElement) {
+      shell.style.setProperty(
+        "--site-background-image",
+        `url('${selectedBackground}')`
+      );
+    }
+  </script>
 </body>
 </html>

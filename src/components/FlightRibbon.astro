@@ -173,7 +173,7 @@ const socketToken =
 
         socket.onopen = () => {
           if (socketToken) {
-            socket.send(JSON.stringify({ token: socketToken }));
+            socket.send(JSON.stringify({token: socketToken}));
           }
         };
 
@@ -195,6 +195,6 @@ const socketToken =
 
     reset();
     connect();
-    window.addEventListener("beforeunload", cleanupSocket, { once: true });
+    window.addEventListener("beforeunload", cleanupSocket, {once: true});
   }
 </script>
