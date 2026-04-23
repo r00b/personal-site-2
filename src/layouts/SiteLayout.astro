@@ -1,5 +1,6 @@
 ---
 import Analytics from '@vercel/analytics/astro'
+import SpeedInsights from "@vercel/speed-insights/astro"
 import "../styles/global.css";
 
 interface Props {
@@ -40,6 +41,7 @@ const defaultBackgroundImagePath = backgroundImagePaths[0];
     <meta property="og:type" content="website"/>
     <meta property="og:description" content={description}/>
     <Analytics/>
+    <SpeedInsights/>
 </head>
 <body style={`--site-background-image: url('${defaultBackgroundImagePath}')`}>
     <div class="site-shell">
