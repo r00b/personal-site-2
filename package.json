@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "Astro rewrite of Rob Steilberg's personal site",
+  "description": "Rob Steilberg's personal site",
   "scripts": {
     "dev": "astro dev --host",
     "start": "astro dev --host",
@@ -21,5 +21,9 @@
   },
   "devDependencies": {
     "typescript": "^5.0.0"
+  },
+  "volta": {
+    "node": "24.15.0",
+    "npm": "11.12.1"
   }
 }

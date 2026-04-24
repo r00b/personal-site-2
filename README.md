@@ -1,62 +1,68 @@
-# Astro Rewrite
+# personal-site-2
 
-This directory contains a standalone Astro rebuild of the current personal site. It mirrors the visible Gatsby site as it exists today:
+This repository is the active Astro-based version of my personal site.
 
-- full-screen background image
-- translucent top navigation
-- portrait/profile card
-- matching `404` page
-- no active flight tracker
+## Tech Stack
+
+- [Astro](https://astro.build/)
+- plain CSS in [`src/styles/global.css`](/Users/rsteilberg/Developer/Repositories/personal-site-2/src/styles/global.css)
+- Vercel Analytics and Speed Insights in [`src/layouts/SiteLayout.astro`](/Users/rsteilberg/Developer/Repositories/personal-site-2/src/layouts/SiteLayout.astro)
 
 ## Commands
 
-1. Install dependencies:
+Install dependencies:
 
-   ```bash
-   npm install
-   ```
+```bash
+npm install
+```
 
-   Modern Astro expects a newer Node runtime than the root Gatsby app currently pins. If you are still using the root Volta toolchain, switch to Node 18+ before installing.
+Start local development:
 
-2. Start local development:
+```bash
+npm run dev
+```
 
-   ```bash
-   npm run dev
-   ```
+Run Astro's checks:
 
-3. Build for production:
+```bash
+npm run check
+```
 
-   ```bash
-   npm run build
-   ```
+Create a production build:
 
-4. Run Astro's project checks:
+```bash
+npm run build
+```
 
-   ```bash
-   npm run check
-   ```
+Preview the production build:
 
-## Background Image
+```bash
+npm run preview
+```
 
-The background image is intentionally easy to swap.
+## Background Images
 
-- Default file: [`public/assets/site-background.jpg`](/Users/rsteilberg/Developer/Repositories/personal-site/astro/public/assets/site-background.jpg)
-- Layout reference: [`src/layouts/SiteLayout.astro`](/Users/rsteilberg/Developer/Repositories/personal-site/astro/src/layouts/SiteLayout.astro)
+The site picks a random background image on each page load.
 
-To replace it, either:
+To change the set of backgrounds:
 
-1. overwrite `public/assets/site-background.jpg` with a new image using the same filename, or
-2. update the `backgroundImagePath` constant in `SiteLayout.astro`
+1. Add or replace files in [`public/assets`](/Users/rsteilberg/Developer/Repositories/personal-site-2/public/assets)
+2. Update the `backgroundImagePaths` array in [`src/layouts/SiteLayout.astro`](/Users/rsteilberg/Developer/Repositories/personal-site-2/src/layouts/SiteLayout.astro)
 
-The current CSS keeps the image right-aligned on smaller screens and centered on wider screens to match the Gatsby site.
+## Flight Ribbon
 
-## Assets
+The homepage includes a live flight ribbon implemented in [`src/components/FlightRibbon.astro`](/Users/rsteilberg/Developer/Repositories/personal-site-2/src/components/FlightRibbon.astro).
 
-- Avatar: [`public/assets/avatar.jpg`](/Users/rsteilberg/Developer/Repositories/personal-site/astro/public/assets/avatar.jpg)
-- Favicon: [`public/assets/favicon.png`](/Users/rsteilberg/Developer/Repositories/personal-site/astro/public/assets/favicon.png)
-- Resume PDF: [`public/assets/resume.pdf`](/Users/rsteilberg/Developer/Repositories/personal-site/astro/public/assets/resume.pdf)
+Set these environment variables to connect it to the live feed:
+
+- `PUBLIC_SERVE1090_URL`
+- `PUBLIC_SERVE1090_TOKEN`
+
+See [.env.template](/Users/rsteilberg/Developer/Repositories/personal-site-2/.env.template).
+
+If the environment variables are missing or the feed is offline, the ribbon should still render safely and fall back to the empty state.
 
 ## Notes
 
-- Fonts are loaded from Google Fonts to match the existing Gatsby look.
-- This Astro app is intentionally simple and mostly static so it is easy to maintain or extend later.
+- Background images are optimized `.webp` files for performance.
+- Future agent guidance lives in [AGENTS.md](/Users/rsteilberg/Developer/Repositories/personal-site-2/AGENTS.md).
